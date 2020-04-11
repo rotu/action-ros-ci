@@ -68,10 +68,8 @@ export async function augmentEnv(
 	var env_after: Env = {}
 	const options: im.ExecOptions = {
 		listeners: {
-			stdout: (data: Buffer) => {
-				const str = data.toString();
-				console.log('got environment variable: ', str)
-				var splitted = str.split('=', 2);
+			stdline: (line: string) => {
+				var splitted = line.split('=', 2);
 				env_after [splitted[0]] = splitted[1];
 			}
 		},
@@ -172,8 +170,14 @@ async function run() {
 		);
 
 		const coverageIgnorePattern = core.getInput("coverage-ignore-pattern");
-
 		let env: Env = {}
+
+		if (process.platform == "win32") {
+			console.log(`setting up visual studio`)
+			env = await augmentEnv("%programfiles(x86)%\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat", env)
+			console.log('new environment: ', env)
+		}
+
 		let commandPrefix = "";
 		if (sourceRosBinaryInstallation) {
 			if (process.platform !== "linux") {
@@ -186,9 +190,6 @@ async function run() {
 				console.log(`augmenting environment with /opt/ros/${rosDistribution}/setup.sh`)
 				env = await augmentEnv(`/opt/ros/${rosDistribution}/setup.sh`, env)
 				console.log('new environment: ', env)
-			}
-			for (let rosDistribution of sourceRosBinaryInstallationList) {
-				commandPrefix += `source /opt/ros/${rosDistribution}/setup.sh && `;
 			}
 		}
 

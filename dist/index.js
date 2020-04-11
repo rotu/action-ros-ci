@@ -4845,10 +4845,8 @@ function augmentEnv(script, env) {
         var env_after = {};
         const options = {
             listeners: {
-                stdout: (data) => {
-                    const str = data.toString();
-                    console.log('got environment variable: ', str);
-                    var splitted = str.split('=', 2);
+                stdline: (line) => {
+                    var splitted = line.split('=', 2);
                     env_after[splitted[0]] = splitted[1];
                 }
             },
@@ -4939,6 +4937,11 @@ function run() {
             const vcsRepoFileUrlListResolved = vcsRepoFileUrlListNonEmpty.map(x => resolveVcsRepoFileUrl(x));
             const coverageIgnorePattern = core.getInput("coverage-ignore-pattern");
             let env = {};
+            if (process.platform == "win32") {
+                console.log(`setting up visual studio`);
+                env = yield augmentEnv("%programfiles(x86)%\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat", env);
+                console.log('new environment: ', env);
+            }
             let commandPrefix = "";
             if (sourceRosBinaryInstallation) {
                 if (process.platform !== "linux") {
@@ -4949,9 +4952,6 @@ function run() {
                     console.log(`augmenting environment with /opt/ros/${rosDistribution}/setup.sh`);
                     env = yield augmentEnv(`/opt/ros/${rosDistribution}/setup.sh`, env);
                     console.log('new environment: ', env);
-                }
-                for (let rosDistribution of sourceRosBinaryInstallationList) {
-                    commandPrefix += `source /opt/ros/${rosDistribution}/setup.sh && `;
                 }
             }
             // rosdep on Windows does not reliably work on Windows, see
