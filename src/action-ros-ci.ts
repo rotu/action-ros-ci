@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 import * as im from "@actions/exec/lib/interfaces"; // eslint-disable-line no-unused-vars
 import * as tr from "@actions/exec/lib/toolrunner";
+import {exec} from "@actions/exec/lib/exec"
 import * as io from "@actions/io";
 import * as os from "os";
 import * as path from "path";
@@ -54,6 +55,30 @@ function resolveVcsRepoFileUrl(vcsRepoFileUrl: string): string {
 	} else {
 		return vcsRepoFileUrl;
 	}
+}
+
+type Env = { [key: string]: string; }
+
+// execute the given command with the given variable environment and returns the updated variable environment
+export async function captureEnv(
+	script: string,
+	env?: Env
+): Promise<Env>
+{
+	var new_env: Env = {}
+	const options: im.ExecOptions = {
+		listeners: {
+			stdout: (data: Buffer) => {
+				const str = data.toString();
+				var splitted = str.split('=', 2);
+				console.log(splitted);
+				new_env [splitted[0]] = splitted[1];
+			}
+		},
+		env: env
+	}
+	await exec('bash', ['-c', `source ${script} 1>2 && printenv`], options)
+	return new_env;
 }
 
 /**
@@ -153,6 +178,8 @@ async function run() {
 				commandPrefix += `source /opt/ros/${rosDistribution}/setup.sh && `;
 			}
 		}
+		let env = captureEnv('/opt/ros/${rosDistribution}/setup.sh')
+		console.log(env)
 
 		// rosdep on Windows does not reliably work on Windows, see
 		// ros-infrastructure/rosdep#610 for instance. So, we do not run it.
