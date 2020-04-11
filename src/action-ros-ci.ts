@@ -60,7 +60,7 @@ function resolveVcsRepoFileUrl(vcsRepoFileUrl: string): string {
 type Env = { [key: string]: string; }
 
 // execute the given command with the given variable environment and returns the updated variable environment
-export async function captureEnv(
+export async function augmentEnv(
 	script: string,
 	env?: Env
 ): Promise<Env>
@@ -71,13 +71,17 @@ export async function captureEnv(
 			stdout: (data: Buffer) => {
 				const str = data.toString();
 				var splitted = str.split('=', 2);
-				console.log(splitted);
 				new_env [splitted[0]] = splitted[1];
 			}
 		},
 		env: env
 	}
-	await exec('bash', ['-c', `source ${script} 1>2 && printenv`], options)
+	if (script.endsWith(".bat") || script.endsWith(".cmd")) {
+		await exec('cmd', ['-c', `type ${script} 1>&2 && SET`], options)
+	} else {
+		await exec('bash', ['-c', `source ${script} 1>&2 && printenv`], options)
+	}
+
 	return new_env;
 }
 
@@ -177,7 +181,7 @@ async function run() {
 			}
 			for (let rosDistribution of sourceRosBinaryInstallationList) {
 				console.log(`augmenting environment with /opt/ros/${rosDistribution}/setup.sh`)
-				env = await captureEnv(`/opt/ros/${rosDistribution}/setup.sh`, env)
+				env = await augmentEnv(`/opt/ros/${rosDistribution}/setup.sh`, env)
 				console.log('new environment: ', env)
 			}
 			for (let rosDistribution of sourceRosBinaryInstallationList) {
