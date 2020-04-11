@@ -4842,13 +4842,14 @@ function resolveVcsRepoFileUrl(vcsRepoFileUrl) {
 // execute the given command with the given variable environment and returns the updated variable environment
 function augmentEnv(script, env) {
     return __awaiter(this, void 0, void 0, function* () {
-        var new_env = {};
+        var env_after = {};
         const options = {
             listeners: {
                 stdout: (data) => {
                     const str = data.toString();
+                    console.log('got environment variable: ', str);
                     var splitted = str.split('=', 2);
-                    new_env[splitted[0]] = splitted[1];
+                    env_after[splitted[0]] = splitted[1];
                 }
             },
             env: env
@@ -4859,7 +4860,7 @@ function augmentEnv(script, env) {
         else {
             yield exec_1.exec('bash', ['-c', `source ${script} 1>&2 && printenv`], options);
         }
-        return new_env;
+        return env_after;
     });
 }
 exports.augmentEnv = augmentEnv;

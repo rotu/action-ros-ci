@@ -65,13 +65,14 @@ export async function augmentEnv(
 	env?: Env
 ): Promise<Env>
 {
-	var new_env: Env = {}
+	var env_after: Env = {}
 	const options: im.ExecOptions = {
 		listeners: {
 			stdout: (data: Buffer) => {
 				const str = data.toString();
+				console.log('got environment variable: ', str)
 				var splitted = str.split('=', 2);
-				new_env [splitted[0]] = splitted[1];
+				env_after [splitted[0]] = splitted[1];
 			}
 		},
 		env: env
@@ -82,7 +83,7 @@ export async function augmentEnv(
 		await exec('bash', ['-c', `source ${script} 1>&2 && printenv`], options)
 	}
 
-	return new_env;
+	return env_after;
 }
 
 /**
