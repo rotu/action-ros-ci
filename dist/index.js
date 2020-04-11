@@ -4857,8 +4857,11 @@ function augmentEnv(script, env) {
         if (script.endsWith(".bat") || script.endsWith(".cmd")) {
             yield exec_1.exec('cmd', ['-c', `type ${script} 1>&2 && SET`], options);
         }
-        else {
+        else if (script.endsWith('.bash') || script.endsWith('.sh')) {
             yield exec_1.exec('bash', ['-c', `source ${script} 1>&2 && printenv`], options);
+        }
+        else {
+            throw new Error(`could not determine interpreter of script ${script}`);
         }
         return env_after;
     });

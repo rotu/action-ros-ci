@@ -79,8 +79,10 @@ export async function augmentEnv(
 	}
 	if (script.endsWith(".bat") || script.endsWith(".cmd")) {
 		await exec('cmd', ['-c', `type ${script} 1>&2 && SET`], options)
-	} else {
+	} else if (script.endsWith('.bash') || script.endsWith('.sh')) {
 		await exec('bash', ['-c', `source ${script} 1>&2 && printenv`], options)
+	} else {
+		throw new Error(`could not determine interpreter of script ${script}`)
 	}
 
 	return env_after;
