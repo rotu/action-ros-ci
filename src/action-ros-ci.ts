@@ -176,8 +176,9 @@ async function run() {
 				return;
 			}
 			for (let rosDistribution of sourceRosBinaryInstallationList) {
+				console.log(`augmenting environment with /opt/ros/${rosDistribution}/setup.sh`)
 				env = await captureEnv(`/opt/ros/${rosDistribution}/setup.sh`, env)
-				console.log(env)
+				console.log('new environment: ', env)
 			}
 			for (let rosDistribution of sourceRosBinaryInstallationList) {
 				commandPrefix += `source /opt/ros/${rosDistribution}/setup.sh && `;
