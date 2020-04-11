@@ -1,13 +1,6 @@
 name: "Test action-ros-ci"
-on:
-  pull_request:
-  push:
-    branches:
-      - master
-      - 'releases/*'
-  schedule:
-    # Run the CI automatically every hour to look for flakyness.
-    - cron:  '0 * * * *'
+on: push
+
 
 env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
