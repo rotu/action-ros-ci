@@ -4930,6 +4930,7 @@ function run() {
             const vcsRepoFileUrlListNonEmpty = vcsRepoFileUrlList.filter(x => x != "");
             const vcsRepoFileUrlListResolved = vcsRepoFileUrlListNonEmpty.map(x => resolveVcsRepoFileUrl(x));
             const coverageIgnorePattern = core.getInput("coverage-ignore-pattern");
+            let env = {};
             let commandPrefix = "";
             if (sourceRosBinaryInstallation) {
                 if (process.platform !== "linux") {
@@ -4937,11 +4938,13 @@ function run() {
                     return;
                 }
                 for (let rosDistribution of sourceRosBinaryInstallationList) {
+                    env = yield captureEnv(`/opt/ros/${rosDistribution}/setup.sh`, env);
+                    console.log(env);
+                }
+                for (let rosDistribution of sourceRosBinaryInstallationList) {
                     commandPrefix += `source /opt/ros/${rosDistribution}/setup.sh && `;
                 }
             }
-            let env = captureEnv('/opt/ros/${rosDistribution}/setup.sh');
-            console.log(env);
             // rosdep on Windows does not reliably work on Windows, see
             // ros-infrastructure/rosdep#610 for instance. So, we do not run it.
             if (process.platform != "win32") {
