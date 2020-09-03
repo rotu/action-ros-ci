@@ -59,9 +59,14 @@ inputs:
     required: false
   vcs-repo-file-url:
     description: |
-        repo file URL passed to vcs to initialize the colcon workspace.
-        The URL may point to a local file, such as file://path/to/file.txt
-    default: "https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos"
+        repo file path or URL passed to vcs to initialize the colcon workspace.
+        Multiple values are accepted and may be separated by a newline.
+        If multiple repo files specify a given path, the last one wins.
+    required: false
+  include-target-ros2-distro-repos:
+    description: 
+        If true, prepend the source from target-ros2-distro to your repo-file-url.
+    default: true
 outputs:
   ros-workspace-directory-name:
     description: |

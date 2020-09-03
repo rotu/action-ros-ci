@@ -170,6 +170,17 @@ async function run() {
 			resolveVcsRepoFileUrl(x)
 		);
 
+		const includeTargetRos2DistroRepos = core.getInput(
+			"include-target-ros2-distro-repos"
+		);
+		if (includeTargetRos2DistroRepos && targetRos2Distro) {
+			const branch_name =
+				targetRos2Distro == "rolling" ? "master" : targetRos2Distro;
+			vcsRepoFileUrlList.unshift(
+				`https://raw.githubusercontent.com/ros2/ros2/${branch_name}/ros2.repos`
+			);
+		}
+
 		const coverageIgnorePattern = core.getInput("coverage-ignore-pattern");
 
 		if (!validateDistros(targetRos1Distro, targetRos2Distro)) {
