@@ -19,7 +19,13 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: git add -f dist/index.js
-    - run: git interpret-trailers --trailer autobuilt
-    - run: git commit --amend
-    # - run: git commit --author="CI <nobody@github.com>" --message="Autobuild"
-    - run: git push
+      id: add-committed
+    - run: |
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions"
+        git interpret-trailers --trailer autobuilt
+        git commit -m "autobuild" -s
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
