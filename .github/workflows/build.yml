@@ -19,7 +19,7 @@ jobs:
     - name: Check if there are changes
       id: changes
       uses: UnicornGlobal/has-changes-action@v1.0.11
-    - if: steps.changes.outputs.changed
+    - if: steps.changes.outputs.changed == 1
       run: |
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ros-tooling[bot]"
