@@ -16,9 +16,18 @@ jobs:
     - run: npm ci
     - run: rm dist/index.js
     - run: npm run build
-    - run: |
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config user.name "ROS Tooling Bot"
-    - run: git commit -o dist/index.js -m "autobuild" --no-verify -s || true
-      # Commit will fail if the build is current. That is okay
-    - run: git push
+    - name: Check if there are changes
+      id: changes
+      uses: UnicornGlobal/has-changes-action@v1.0.11
+    - if: steps.changes.outputs.changed
+      run: |
+        git config user.email "ros-tooling@users.noreply.github.com"
+        git config user.name "ROS Tooling [bot]"
+        
+        git commit -o dist/index.js -m "$commit-msg" --no-verify
+        git push --no-verify
+      env:
+        commit-msg: |
+          Autobuild
+
+          GitHub-Workflow: ${{ github.workflow }}
