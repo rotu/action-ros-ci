@@ -21,5 +21,5 @@ jobs:
     - run: |
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config user.name "github-actions"
-        git commit -m "autobuild"
-        git push
+    - run: git commit -m "autobuild"
+    - run: git push
