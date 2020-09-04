@@ -3355,7 +3355,7 @@ function run() {
             };
             const curlFlags = curlFlagsArray.join(" ");
             for (let vcsRepoFileUrl of vcsRepoFileUrlListResolved) {
-                yield execBashCommand(`curl ${curlFlags} '${vcsRepoFileUrl}' | vcs import --force --recursive src/`, undefined, options);
+                yield execBashCommand(`curl ${curlFlags} '${vcsRepoFileUrl}' | vcs import   --force --recursive src/`, undefined, options);
             }
             // If the package under tests is part of ros.repos, remove it first.
             // We do not want to allow the "default" head state of the package to
