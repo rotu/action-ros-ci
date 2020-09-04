@@ -1,0 +1,24 @@
+name: "Build"
+on:
+  push:
+    paths-ignore:
+      - 'dist/**'
+
+jobs:
+  test_ros:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - run: npm ci
+    - run: rm dist/index.js
+    - run: npm run build
+    - run: |
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "ROS Tooling Bot"
+    - run: git commit -o dist/index.js -m "autobuild" --no-verify -s || true
+      # Commit will fail if the build is current. That is okay
+    - run: git push
