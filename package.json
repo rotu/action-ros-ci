@@ -8,7 +8,7 @@
     "lint": "eslint src/action-ros-ci.ts",
     "prettier": "prettier --write 'src/action-ros-ci.ts'",
     "test": "tsc --noEmit && jest --coverage",
-    "pre-commit": "npm run test && npm run lint && npm run build"
+    "pre-commit": "npm run test && npm run lint"
   },
   "repository": {
     "type": "git",
