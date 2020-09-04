@@ -3,9 +3,6 @@ on:
   pull_request:
     paths-ignore:
       - 'dist/**'
-  push:
-    paths-ignore:
-      - 'dist/**'
 
 jobs:
   test_ros:
@@ -29,3 +26,4 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
