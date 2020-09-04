@@ -16,11 +16,9 @@ jobs:
     - run: npm ci
     - run: rm dist/index.js
     - run: npm run build
-    - run: git add -f dist/index.js
-      id: add-committed
     - run: |
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config user.name "github-actions"
-    - run: git commit -m "autobuild" --no-verify || true
+        git config user.name "ROS Tooling Bot"
+    - run: git commit -o dist/index.js -m "autobuild" --no-verify -s || true
       # Commit will fail if the build is current. That is okay
     - run: git push

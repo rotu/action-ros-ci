@@ -3385,7 +3385,7 @@ function run() {
     url: 'https://${tokenAuth}github.com/${repoFullName}.git'
     version: '${commitRef}'`;
             fs_1.default.writeFileSync(repoFilePath, repoFileContent);
-            yield execBashCommand("vcs import --force --recursive src/ < package.repo", undefined, options);
+            yield execBashCommand("vcs import --force --recursive src/ <  package.repo", undefined, options);
             // Remove all repositories the package under test does not depend on, to
             // avoid having rosdep installing unrequired dependencies.
             yield execBashCommand(`diff --new-line-format="" --unchanged-line-format="" <(colcon list -p) <(colcon list --packages-up-to ${packageNameList.join(" ")} -p) | xargs rm -rf`, undefined, options);
