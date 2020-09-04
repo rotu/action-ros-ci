@@ -1,8 +1,5 @@
 name: "Build"
-on:
-  push:
-    paths-ignore:
-      - 'dist/**'
+on: push
 jobs:
   test_ros:
     name: Build
@@ -12,13 +9,15 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: npm ci
     - run: rm dist/index.js
-    - run: npm run build
+    - run: |
+        npm ci
+        npm run build
     - name: Check if there are changes
       id: changes
       run: |
-        if [[ `git status --porcelain --ignored` ]]; then
+        git add --force dist/index.js
+        if [[ `git diff --staged` ]]; then
           echo ::set-output name=changed::1
         else
           echo ::set-output name=changed::0
@@ -26,12 +25,8 @@ jobs:
     - if: steps.changes.outputs.changed == 1
       run: |
         git config user.email "ros-tooling@users.noreply.github.com"
-        git config user.name "ros-tooling[bot]"
-        git add --force dist
-        git commit -m "$commitmsg" --no-verify
+        git config user.name "ROS Tooling [bot]"
+        git commit --no-verify -m "$commitmsg" -s
         git push --no-verify
       env:
-        commitmsg: |
-          Autobuild
-
-          GitHub-Workflow: ${{ github.workflow }}
+        commitmsg: "Autobuild\\n\\nGitHub-Workflow: ${{ github.workflow }}"
