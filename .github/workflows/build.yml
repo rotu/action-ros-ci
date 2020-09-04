@@ -3,7 +3,6 @@ on:
   push:
     paths-ignore:
       - 'dist/**'
-
 jobs:
   test_ros:
     name: Build
@@ -18,13 +17,18 @@ jobs:
     - run: npm run build
     - name: Check if there are changes
       id: changes
-      uses: UnicornGlobal/has-changes-action@v1.0.11
+      run: |
+        if [[ `git status --porcelain --ignored` ]]; then
+          echo ::set-output name=changed::1
+        else
+          echo ::set-output name=changed::0
+        fi
     - if: steps.changes.outputs.changed == 1
       run: |
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ros-tooling[bot]"
-        
-        git commit -o dist/index.js -m "$commitmsg" --no-verify
+        git add --force dist
+        git commit -m "$commitmsg" --no-verify
         git push --no-verify
       env:
         commitmsg: |
