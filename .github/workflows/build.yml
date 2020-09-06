@@ -17,9 +17,8 @@ jobs:
         git checkout --detach
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ROS Tooling [bot]"
-        git commit --no-verify -m "$commitmsg" -s
-        git tag build/${{github.sha}}
-        git push origin --no-verify refs/tags/build/${{github.sha}}
+        git commit --no-verify -m "$commitmsg"
+        git push origin --no-verify HEAD:refs/tags/build/${{github.sha}}
         
       env:
         commitmsg: "Autobuild\\n\\nGitHub-Workflow: ${{ github.workflow }}"
