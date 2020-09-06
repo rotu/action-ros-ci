@@ -17,7 +17,7 @@ jobs:
         git checkout --detach
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ROS Tooling [bot]"
-        git commit --no-verify -m "$commitmsg"
+        git commit --no-verify -m "$commitmsg" --allow-empty
         git push origin --no-verify HEAD:refs/tags/build/${{github.sha}}
         
       env:
