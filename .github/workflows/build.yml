@@ -9,7 +9,6 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: rm dist/index.js
     - run: |
         npm ci
         npm run build
@@ -17,8 +16,8 @@ jobs:
         git checkout --detach
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ROS Tooling [bot]"
-        git commit --no-verify -m "$commitmsg" --allow-empty
+        git add --force dist 
+        git commit --no-verify -m "$commitmsg" --only dist
         git push origin --no-verify HEAD:refs/tags/build/${{github.sha}}
-        
       env:
-        commitmsg: "Autobuild\\n\\nGitHub-Workflow: ${{ github.workflow }}"
+        commitmsg: "Autobuild\n\nGitHub-Workflow: ${{ github.workflow }}"
