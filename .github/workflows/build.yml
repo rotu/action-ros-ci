@@ -24,9 +24,12 @@ jobs:
         fi
     - if: steps.changes.outputs.changed == 1
       run: |
+        git checkout --detach
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ROS Tooling [bot]"
         git commit --no-verify -m "$commitmsg" -s
-        git push --no-verify
+        git tag build/${{github.sha}}
+        git push --no-verify build/${{github.sha}}
+        
       env:
         commitmsg: "Autobuild\\n\\nGitHub-Workflow: ${{ github.workflow }}"
