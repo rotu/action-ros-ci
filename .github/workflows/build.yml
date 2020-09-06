@@ -13,24 +13,13 @@ jobs:
     - run: |
         npm ci
         npm run build
-    - name: Check if there are changes
-      id: changes
-      run: |
-        git add --force dist/index.js
-        if [[ `git diff --staged` ]]; then
-          echo ::set-output name=changed::1
-        else
-          echo ::set-output name=changed::0
-        fi
-    - if: steps.changes.outputs.changed == 1
-      run: |
+    - run: |
         git checkout --detach
         git config user.email "ros-tooling@users.noreply.github.com"
         git config user.name "ROS Tooling [bot]"
         git commit --no-verify -m "$commitmsg" -s
         git tag build/${{github.sha}}
         git push origin --no-verify refs/tags/build/${{github.sha}}
-        
         
       env:
         commitmsg: "Autobuild\\n\\nGitHub-Workflow: ${{ github.workflow }}"
